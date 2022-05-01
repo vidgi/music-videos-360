@@ -1,79 +1,81 @@
 import './App.css';
 
-import { Suspense } from 'react'
+import { Suspense, useRef } from 'react'
 
-import { Canvas } from "react-three-fiber";
-import { Loader,FirstPersonControls,PointerLockControls, Html, OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import { Canvas, useFrame } from "react-three-fiber";
+import { Image, Environment, Loader,FirstPersonControls,PointerLockControls, Html, OrbitControls, PerspectiveCamera } from "@react-three/drei";
 
 function App() {
   const videos = [
-    "https://www.youtube.com/embed/OFfiljkfmx8",
-    "https://www.youtube.com/embed/0Szr5Dcwn4Y",
-    "https://www.youtube.com/embed/sBXtJGLhSk8",
-    "https://www.youtube.com/embed/Ysf6pcyeBsY",
-    "https://www.youtube.com/embed/au6T5QEoZ4k",
-    "https://www.youtube.com/embed/zuXOiV6U7tk",
-    "https://www.youtube.com/embed/xUAgawZAi5g",
-    "https://www.youtube.com/embed/coXTMUhWFmY",
-    "https://www.youtube.com/embed/FzjOp-qIQOQ",
-    "https://www.youtube.com/embed/AQ8-YXveL2o",
-    "https://www.youtube.com/embed/YO2R3SxhPeA",
-    "https://www.youtube.com/embed/lhfs1CzzUPM",
-    "https://www.youtube.com/embed/_95Rt3uYf7M",
-    "https://www.youtube.com/embed/Vu0nRz_bQ0Y",
-    "https://www.youtube.com/embed/u24e43iW9KE",
-    "https://www.youtube.com/embed/k3MD7TaCXLA",
-    "https://www.youtube.com/embed/cQZDH4NWmaU",
-    "https://www.youtube.com/embed/GQmgPnnf18Y",
-    "https://www.youtube.com/embed/ZAn3JdtSrnY",
-    "https://www.youtube.com/embed/q-XH92Wie0U",
-    "https://www.youtube.com/embed/8EnSTG8G1t8",
-    "https://www.youtube.com/embed/fYEAflCO4Eo",
-    "https://www.youtube.com/embed/EIFlhzdILMc",
-    "https://www.youtube.com/embed/BLmqr4iKpUs",
-    "https://www.youtube.com/embed/TbJE-KVZvTA",
-    "https://www.youtube.com/embed/53I6fcFXqxo",
-    "https://www.youtube.com/embed/ncBPcx4RdbE",
-    "https://www.youtube.com/embed/f9X1C7pTu-M",
-    "https://www.youtube.com/embed/eVOWYeZm9v8",
-    "https://www.youtube.com/embed/CrFcxR4Y6C0",
-    "https://www.youtube.com/embed/_bhJzXTf6KE",
-    "https://www.youtube.com/embed/tl9SRsPbWLM",
-    "https://www.youtube.com/embed/OTHHeIAYfuU",
-    "https://www.youtube.com/embed/BjC0KUxiMhc",
-    "https://www.youtube.com/embed/GtBmZYqZZjU",
-    "https://www.youtube.com/embed/nnYTNRADQQ4",
-    "https://www.youtube.com/embed/EWcTp1r_Nls",
-    "https://www.youtube.com/embed/-5Ae-LhMIG0",
-    "https://www.youtube.com/embed/AcukstLwNPw",
-    "https://www.youtube.com/embed/D5qUpJo_Gac",
-    "https://www.youtube.com/embed/XDpoBc8t6gE",
-    "https://www.youtube.com/embed/qRLReDmuIf8",
-    "https://www.youtube.com/embed/BqnG_Ei35JE",
-    "https://www.youtube.com/embed/6C5sB6AqJkM",
-    "https://www.youtube.com/embed/XDN2wbm6zi8",
-    "https://www.youtube.com/embed/wtZskz4zo24",
-    "https://www.youtube.com/embed/sn3cHUtNZKo",
-    "https://www.youtube.com/embed/cFElidiwxYU",
-    "https://www.youtube.com/embed/-d3xu4sToI8",
-    "https://www.youtube.com/embed/PPZZmfcLxFI",
-    "https://www.youtube.com/embed/ATNJAYcIL04",
-    "https://www.youtube.com/embed/VHqEXaOzxbA",
-    "https://www.youtube.com/embed/LluBWyXztvQ",
-    "https://www.youtube.com/embed/xUEg2mXJx0M",
-    "https://www.youtube.com/embed/-Js_-DtskxM",
-    "https://www.youtube.com/embed/t5p5uCgY-tY",
-    "https://www.youtube.com/embed/hVyjLwKnOCk",
-    "https://www.youtube.com/embed/uIjU0do0PqU",
-    "https://www.youtube.com/embed/2KkMyDSrBVI",
-    "https://www.youtube.com/embed/pIz2K3ArrWk",
+    "OFfiljkfmx8",
+    "0Szr5Dcwn4Y",
+    "sBXtJGLhSk8",
+    "Ysf6pcyeBsY",
+    "au6T5QEoZ4k",
+    "zuXOiV6U7tk",
+    "xUAgawZAi5g",
+    "coXTMUhWFmY",
+    "FzjOp-qIQOQ",
+    "AQ8-YXveL2o",
+    "YO2R3SxhPeA",
+    "lhfs1CzzUPM",
+    "_95Rt3uYf7M",
+    "Vu0nRz_bQ0Y",
+    "u24e43iW9KE",
+    "k3MD7TaCXLA",
+    "cQZDH4NWmaU",
+    "GQmgPnnf18Y",
+    "ZAn3JdtSrnY",
+    "q-XH92Wie0U",
+    "8EnSTG8G1t8",
+    "fYEAflCO4Eo",
+    "EIFlhzdILMc",
+    "BLmqr4iKpUs",
+    "TbJE-KVZvTA",
+    "53I6fcFXqxo",
+    "ncBPcx4RdbE",
+    "f9X1C7pTu-M",
+    "eVOWYeZm9v8",
+    "CrFcxR4Y6C0",
+    "_bhJzXTf6KE",
+    "tl9SRsPbWLM",
+    "OTHHeIAYfuU",
+    "BjC0KUxiMhc",
+    "GtBmZYqZZjU",
+    "nnYTNRADQQ4",
+    "EWcTp1r_Nls",
+    "-5Ae-LhMIG0",
+    "AcukstLwNPw",
+    "D5qUpJo_Gac",
+    "XDpoBc8t6gE",
+    "qRLReDmuIf8",
+    "BqnG_Ei35JE",
+    "6C5sB6AqJkM",
+    "XDN2wbm6zi8",
+    "wtZskz4zo24",
+    "sn3cHUtNZKo",
+    "cFElidiwxYU",
+    "-d3xu4sToI8",
+    "PPZZmfcLxFI",
+    "ATNJAYcIL04",
+    "VHqEXaOzxbA",
+    "LluBWyXztvQ",
+    "xUEg2mXJx0M",
+    "-Js_-DtskxM",
+    "t5p5uCgY-tY",
+    "hVyjLwKnOCk",
+    "uIjU0do0PqU",
+    "2KkMyDSrBVI",
+    "pIz2K3ArrWk",
   ]
   return (
     <div className="App">
        <Canvas style={{ height: "100vh", width: "100vw" }}>
        <Suspense fallback={null}>
+         
 
         <group transform position={[20, 0, -20]}>
+         {/* <YoutubeThumbnail link = {videos[0]}/> */}
 
           <YouTubeEmbed position={[-5, -20, 51]} link = {videos[0]} rotation={[0 * (Math.PI / 180), -150 * (Math.PI / 180), 0]}/>
           <YouTubeEmbed position={[-5, -10, 51]} link = {videos[1]} rotation={[0 * (Math.PI / 180), -150 * (Math.PI / 180), 0]}/>
@@ -148,6 +150,18 @@ function App() {
           <YouTubeEmbed position={[-20, 20, 55]} link = {videos[59]} rotation={[0 * (Math.PI / 180), 180 * (Math.PI / 180), 0]}/>
 
         </group>
+        {/* <Environment 
+        background={true}
+        files={[
+          `https://cdn.jsdelivr.net/gh/mrdoob/three.js@r123/examples/textures/cube/angus/cube_m00_c00.jpg`,
+          `https://cdn.jsdelivr.net/gh/mrdoob/three.js@r123/examples/textures/cube/angus/cube_m00_c01.jpg`,
+          `https://cdn.jsdelivr.net/gh/mrdoob/three.js@r123/examples/textures/cube/angus/cube_m00_c02.jpg`,
+          `https://cdn.jsdelivr.net/gh/mrdoob/three.js@r123/examples/textures/cube/angus/cube_m00_c03.jpg`,
+          `https://cdn.jsdelivr.net/gh/mrdoob/three.js@r123/examples/textures/cube/angus/cube_m00_c04.jpg`,
+          `https://cdn.jsdelivr.net/gh/mrdoob/three.js@r123/examples/textures/cube/angus/cube_m00_c05.jpg`,
+        ]}
+        /> */}
+        
         </Suspense>
         <ambientLight />
         {/* <FirstPersonControls
@@ -176,9 +190,15 @@ function YouTubeEmbed(props) {
   return (
     <Html transform position={props.position} rotation={props.rotation}>
       {/* <p>{props.link}</p> */}
-      <iframe width="560" height="315" src={props.link} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <img src={"https://img.youtube.com/vi/"+props.link+"/0.jpg"} alt="thumbnail" width="560" height="315"/>
+      {/* <iframe width="560" height="315" src={"https://www.youtube.com/embed/" + props.link} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> */}
     </Html>
 
     
   );
 }
+
+// function YoutubeThumbnail(props) {
+//   const ref = useRef()
+//   return (<Image ref = {ref} url={"https://img.youtube.com/vi/OFfiljkfmx8/0.jpg"} />);
+// }
