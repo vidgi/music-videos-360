@@ -14,15 +14,13 @@ code {
   .desktop-only {
     display: none;
   }
-
   .mobile-only {
-    display: block;
+    text-align: center;
+    display: block !important;
+    padding-top: 40%;
   }
 }
 
-.desktop-only {
-  display: block;
-}
 .mobile-only {
   display: none;
 }
